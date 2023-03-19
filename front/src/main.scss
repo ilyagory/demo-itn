@@ -1,0 +1,13 @@
+$enable-shadows: true;
+$enable-gradients: true;
+$enable-rounded: false;
+
+$spacer: .5rem;
+
+@import '../node_modules/bootstrap/scss/bootstrap.scss';
+
+html,
+body,
+#app {
+    @extend .h-100;
+}
