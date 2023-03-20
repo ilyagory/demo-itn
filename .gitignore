@@ -1,4 +1,2 @@
 node_modules/
 .vscode/
-front/.env.local
-front/public/main.css
