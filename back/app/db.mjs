@@ -21,24 +21,6 @@ export async function select(itn) {
 /**
  * @param {Object} company
  */
-export async function insert(company) {
-    return db.insert({ itn: company.itn, content: company }).into('itns')
-}
-
-/**
- * @param {Object[]} all 
- */
-export async function insertArray(all) {
-    db.transaction(async tx => {
-        try {
-            await Promise.all(
-                all.map(
-                    company => insert(company)
-                )
-            )
-            tx.commit()
-        } catch (e) {
-            tx.rollback(e)
-        }
-    })
+export async function insert(itn, company) {
+    return db.insert({ itn, content: JSON.stringify(company) }).into('itns')
 }

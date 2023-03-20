@@ -3,12 +3,12 @@ import Router from '@koa/router'
 import bodyParser from 'koa-bodyparser'
 import cors from '@koa/cors'
 
-import handle from './handlers.mjs'
+import handler from './handler.mjs'
 
 const app = new Koa
 const router = new Router
 
-handle(router)
+handler(router)
 
 app.use(cors())
 app.use(bodyParser({

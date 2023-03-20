@@ -14,21 +14,15 @@ export const fetch = async itn => new Promise(req.bind(this, itn))
 function req(itn, ...stuff) {
     const r = request(
         {
-            hostname: 'suggestions.dadata.ru',
-            path: '/suggestions/api/4_1/rs/findById/party',
-            method: 'POST',
+            ...reqOptions(),
             timeout: 3000,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Token ${process.env.DADATATOKEN}`,
-            },
         },
         resp.bind(this, ...stuff)
     )
 
     r.on('error', stuff[1])
-    r.write(JSON.stringify({ query: itn }))
+    const body = reqBody(itn)
+    if (body) r.write(body)
     r.end()
 }
 
@@ -47,18 +41,36 @@ function resp(ok, fail, res) {
 
     res.on('data', d => buf = Buffer.concat([buf, d]))
     res.on('end', () => {
-        let r
         try {
-            r = buf.toString()
-            r = JSON.parse(r)
-            r = r.suggestions
-            r = r.map(s => ({ itn: s.data.inn, ...s.data }))
-            if (r.length === 1) r = r[0]
-
+            let r = buf.toString()
+            r = resParse(r)
             ok(r)
         } catch (e) {
             fail(e)
             return
         }
     })
+}
+
+function reqOptions() {
+    return {
+        hostname: 'suggestions.dadata.ru',
+        path: '/suggestions/api/4_1/rs/findById/party',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Token ${process.env.DADATATOKEN}`,
+        },
+    }
+}
+function reqBody(itn) {
+    return JSON.stringify({ query: itn })
+}
+function resParse(body) {
+    let r = JSON.parse(body)
+
+    r = r.suggestions.map(s=>s.data)
+    
+    return r
 }

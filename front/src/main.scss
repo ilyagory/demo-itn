@@ -6,8 +6,17 @@ $spacer: .5rem;
 
 @import '../node_modules/bootstrap/scss/bootstrap.scss';
 
+body {
+    font-family: 'PT Sans', sans-serif;
+}
+
 html,
 body,
 #app {
     @extend .h-100;
+}
+.company-branch {
+    & + & {
+        @extend .mt-5;
+    }
 }
