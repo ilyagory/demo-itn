@@ -1,0 +1,59 @@
+# this file uses environment variables from build.env
+#
+# files should be created:
+# - secrets/dbpassword.txt
+# - secrets/dadatatoken.txt
+# 
+version: '3.8'
+services:
+# --
+  db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: ${db_user}
+      POSTGRES_DB: ${db_name}
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/10-schema.sql
+    secrets:
+      - db_password
+# --
+  backend:
+    depends_on:
+      - db
+    image: ${backend_image}
+    build:
+      context: ../back
+      dockerfile: ../deploy/backend.dockerfile
+      args:
+        backend_port: ${backend_port}
+    ports:
+      - ${backend_port}:${backend_port}
+    environment:
+      PORT: ${backend_port}
+      DBUSER: ${db_user}
+      DBNAME: ${db_name}
+      DBHOST: db
+      DBPORT: 5432
+      DBPASSWORD_FILE: /run/secrets/db_password
+      DADATATOKEN_FILE: /run/secrets/dadata_token
+    secrets:
+      - db_password
+      - dadata_token
+#--
+  frontend:
+    image: itn/front
+    build:
+      context: ../front
+      dockerfile: ../deploy/frontend.dockerfile
+      args:
+        backend_port: ${backend_port}
+    ports:
+      - 80:80
+# --
+# --
+secrets:
+  db_password:
+    file: ./secrets/dbpassword.txt
+  dadata_token:
+    file: ./secrets/dadatatoken.txt

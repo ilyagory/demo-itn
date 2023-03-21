@@ -1,15 +1,18 @@
 import knex from 'knex'
 
-const db = knex({
-    client: 'pg',
-    connection: {
-        host: process.env.DBHOST,
-        port: process.env.DBPORT,
-        database: process.env.DBNAME,
-        user: process.env.DBUSER,
-        password: process.env.DBPASSWORD,
-    }
-})
+let db
+export function connect(){
+    db = knex({
+        client: 'pg',
+        connection: {
+            host: process.env.DBHOST,
+            port: process.env.DBPORT,
+            database: process.env.DBNAME,
+            user: process.env.DBUSER,
+            password: process.env.DBPASSWORD,
+        },
+    })
+}
 
 /**
  * @param {string} itn
