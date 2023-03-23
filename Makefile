@@ -7,7 +7,7 @@ compose_file=./deploy/docker-compose.yml
 
 .PHONY: up
 up:
-	docker-compose -f $(compose_file) -p $(project_name) up
+	docker-compose -f $(compose_file) -p $(project_name) up -d
 	
 .PHONE: down
 down:
